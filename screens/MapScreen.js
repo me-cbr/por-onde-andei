@@ -38,7 +38,6 @@ export default function MapScreen({ route, navigation }) {
         ))}
       </MapView>
 
-      {/* Botão de voltar */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
