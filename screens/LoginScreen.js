@@ -40,7 +40,7 @@ export default function LoginScreen({ setIsAuthenticated }) {
     checkPreviousLogin();
   }, []);
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (!email || !password) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
@@ -48,18 +48,31 @@ export default function LoginScreen({ setIsAuthenticated }) {
 
     setIsLoading(true);
     try {
-      // Simulação de login
-      if (email === 'user@example.com' && password === '123456') {
-        await AsyncStorage.setItem('userLoggedIn', 'true');
-        setHasLoggedInBefore(true);
-        Alert.alert('Login salvo', 'Use sua biometria da próxima vez.');
-      } else {
-        Alert.alert('Erro', 'Credenciais inválidas');
-      }
+      await AsyncStorage.setItem('userEmail', email);
+      await AsyncStorage.setItem('userPassword', password);
+      await AsyncStorage.setItem('userLoggedIn', 'true');
+      setHasLoggedInBefore(true);
+      Alert.alert('Cadastro salvo', 'Use sua biometria da próxima vez.');
     } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro durante o login');
+      Alert.alert('Erro', 'Ocorreu um erro ao salvar os dados');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      return;
+    }
+
+    const storedEmail = await AsyncStorage.getItem('userEmail');
+    const storedPassword = await AsyncStorage.getItem('userPassword');
+
+    if (email === storedEmail && password === storedPassword) {
+      setIsAuthenticated(true);
+    } else {
+      Alert.alert('Erro', 'Credenciais inválidas');
     }
   };
 
@@ -87,51 +100,51 @@ export default function LoginScreen({ setIsAuthenticated }) {
         style={styles.container}
       >
         <View style={styles.logoContainer}>
-        <Image
+          <Image
             source={require('../assets/logo.png')}
             style={styles.logo}
-        />
+          />
           <Text style={styles.appTitle}>Por Onde Andei</Text>
         </View>
 
         <View style={styles.formContainer}>
-          {!hasLoggedInBefore && (
-            <>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor="#999"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#999"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
 
-              <TextInput
-                style={styles.input}
-                placeholder="Senha"
-                placeholderTextColor="#999"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              placeholderTextColor="#999"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-              <TouchableOpacity 
-                style={styles.loginButton} 
-                onPress={handleLogin}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="white" />
-                ) : (
-                  <Text style={styles.buttonText}>Salvar e Ativar Biometria</Text>
-                )}
-              </TouchableOpacity>
-            </>
-          )}
+            <TouchableOpacity 
+              style={styles.loginButton} 
+              onPress={hasLoggedInBefore ? handleLogin : handleRegister}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.buttonText}>
+                  {hasLoggedInBefore ? 'Entrar' : 'Salvar e Ativar Biometria'}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </>
 
-          {isBiometricAvailable && (
+          {isBiometricAvailable && hasLoggedInBefore && (
             <TouchableOpacity 
               style={styles.biometricButton}
               onPress={handleBiometricAuth}
