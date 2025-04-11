@@ -1,13 +1,19 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-export default function NavBar({ title, onLogout }) {
+export default function NavBar({ title }) {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      <TouchableOpacity onPress={onLogout} style={styles.logoutButton}>
-        <Ionicons name="log-out-outline" size={24} color="white" />
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Profile')}
+        style={styles.userButton}
+      >
+        <AntDesign name="user" size={24} color="white" />
       </TouchableOpacity>
     </View>
   );
@@ -15,13 +21,12 @@ export default function NavBar({ title, onLogout }) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 50,
     backgroundColor: '#4CAF50',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
-    paddingTop: 10, 
+    paddingHorizontal: 20,
   },
   title: {
     color: 'white',
@@ -29,8 +34,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 5,
   },
-  logoutButton: {
+  userButton: {
     padding: 5,
-    marginTop: 5, 
+    marginTop: 5,
   },
 });

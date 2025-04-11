@@ -8,6 +8,7 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import AddScreen from './screens/AddScreen';
 import MapScreen from './screens/MapScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 
@@ -26,7 +27,7 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center' }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4CAF50" />
       </View>
     );
@@ -41,11 +42,14 @@ export default function App() {
           </Stack.Screen>
         ) : (
           <>
-          <Stack.Screen name="Home">
-            {props => <HomeScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
-          </Stack.Screen>
+            <Stack.Screen name="Home">
+              {props => <HomeScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
+            </Stack.Screen>
             <Stack.Screen name="Add" component={AddScreen} />
             <Stack.Screen name="Map" component={MapScreen} />
+            <Stack.Screen name="Profile">
+              {props => <ProfileScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
+            </Stack.Screen>
           </>
         )}
       </Stack.Navigator>
@@ -55,16 +59,6 @@ export default function App() {
 
 const styles = StyleSheet.create({
   loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  permissionContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  authContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

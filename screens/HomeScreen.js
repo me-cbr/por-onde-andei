@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   SafeAreaView,
-  View, 
-  FlatList, 
-  StyleSheet, 
+  View,
+  FlatList,
+  StyleSheet,
   ActivityIndicator,
   Alert,
   StatusBar,
@@ -48,7 +48,7 @@ export default function HomeScreen({ navigation, setIsAuthenticated }) {
           style: 'cancel',
         },
         {
-          text: 'Excluir', 
+          text: 'Excluir',
           onPress: async () => {
             try {
               const updatedPlaces = places.filter(place => place.id !== id);
@@ -90,11 +90,11 @@ export default function HomeScreen({ navigation, setIsAuthenticated }) {
             data={places}
             renderItem={({ item }) => (
               <View style={styles.cardContainer}>
-                <PlaceCard 
-                  place={item} 
+                <PlaceCard
+                  place={item}
                   onPress={() => navigation.navigate('Map', { places: [item] })}
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={() => handleDeletePlace(item.id)}
                 >

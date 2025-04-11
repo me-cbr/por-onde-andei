@@ -7,7 +7,7 @@ export default function SplashScreen({ navigation }) {
     const checkAuth = async () => {
       const userLoggedIn = await AsyncStorage.getItem('userLoggedIn');
       const destination = userLoggedIn === 'true' ? 'Home' : 'Login';
-      
+
       setTimeout(() => {
         navigation.replace(destination);
       }, 2000);
@@ -18,8 +18,8 @@ export default function SplashScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image 
-        source={require('../assets/logo.png')} 
+      <Image
+        source={require('../assets/logo.png')}
         style={styles.logo}
       />
     </View>
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff', 
+    backgroundColor: '#ffffff',
   },
   logo: {
     width: 200,

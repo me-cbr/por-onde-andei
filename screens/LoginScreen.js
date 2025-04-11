@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
-  Text, 
-  StyleSheet, 
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -129,8 +129,8 @@ export default function LoginScreen({ setIsAuthenticated }) {
               secureTextEntry
             />
 
-            <TouchableOpacity 
-              style={styles.loginButton} 
+            <TouchableOpacity
+              style={styles.loginButton}
               onPress={hasLoggedInBefore ? handleLogin : handleRegister}
               disabled={isLoading}
             >
@@ -144,8 +144,8 @@ export default function LoginScreen({ setIsAuthenticated }) {
             </TouchableOpacity>
           </>
 
-          {isBiometricAvailable && hasLoggedInBefore && (
-            <TouchableOpacity 
+          {isBiometricAvailable && (
+            <TouchableOpacity
               style={styles.biometricButton}
               onPress={handleBiometricAuth}
             >
