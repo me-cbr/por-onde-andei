@@ -62,9 +62,14 @@ export default function AddScreen({ navigation }) {
       return;
     }
 
+    if (!title.trim()) {
+      Alert.alert('Campo obrigatório', 'Por favor, preencha o título antes de salvar');
+      return;
+    }
+
     const newPlace = {
       id: Date.now().toString(),
-      title: title || 'Sem título',
+      title: title.trim(),
       photo,
       location,
       date: new Date().toISOString(),
@@ -83,7 +88,7 @@ export default function AddScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.photoContainer}
         onPress={handleTakePhoto}
         disabled={isLoading}
@@ -106,7 +111,7 @@ export default function AddScreen({ navigation }) {
 
       <TextInput
         style={styles.input}
-        placeholder="Título (opcional)"
+        placeholder="Título (obrigatório)"
         value={title}
         onChangeText={setTitle}
       />
@@ -130,7 +135,7 @@ const styles = StyleSheet.create({
   },
   photoContainer: {
     width: '100%',
-    aspectRatio: 4/3,
+    aspectRatio: 4 / 3,
     backgroundColor: '#eee',
     borderRadius: 8,
     marginBottom: 16,
