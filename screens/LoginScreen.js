@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as LocalAuthentication from 'expo-local-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function LoginScreen({ setIsAuthenticated }) {
+export default function LoginScreen({ setIsAuthenticated, navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
@@ -40,26 +40,6 @@ export default function LoginScreen({ setIsAuthenticated }) {
     checkPreviousLogin();
   }, []);
 
-  const handleRegister = async () => {
-    if (!email || !password) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      await AsyncStorage.setItem('userEmail', email);
-      await AsyncStorage.setItem('userPassword', password);
-      await AsyncStorage.setItem('userLoggedIn', 'true');
-      setHasLoggedInBefore(true);
-      Alert.alert('Cadastro salvo', 'Use sua biometria da próxima vez.');
-    } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro ao salvar os dados');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
@@ -70,6 +50,7 @@ export default function LoginScreen({ setIsAuthenticated }) {
     const storedPassword = await AsyncStorage.getItem('userPassword');
 
     if (email === storedEmail && password === storedPassword) {
+      await AsyncStorage.setItem('userLoggedIn', 'true');
       setIsAuthenticated(true);
     } else {
       Alert.alert('Erro', 'Credenciais inválidas');
@@ -108,41 +89,37 @@ export default function LoginScreen({ setIsAuthenticated }) {
         </View>
 
         <View style={styles.formContainer}>
-          <>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="gray"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Senha"
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="gray"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={hasLoggedInBefore ? handleLogin : handleRegister}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text style={styles.buttonText}>
-                  {hasLoggedInBefore ? 'Entrar' : 'Salvar e Ativar Biometria'}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.buttonText}>Entrar</Text>
+            )}
+          </TouchableOpacity>
 
           {isBiometricAvailable && (
             <TouchableOpacity
@@ -153,6 +130,14 @@ export default function LoginScreen({ setIsAuthenticated }) {
               <Text style={styles.biometricText}>Entrar com Biometria</Text>
             </TouchableOpacity>
           )}
+          <TouchableOpacity
+            style={styles.createAccountButton}
+            onPress={() => navigation.navigate('Register')}
+          >
+            <Text style={styles.createAccountText}>
+              Não tem uma conta? <Text style={{ fontWeight: 'bold' }}>Criar agora</Text>
+            </Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -226,5 +211,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     resizeMode: 'contain',
+  },
+  createAccountButton: {
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  createAccountText: {
+    color: '#4CAF50',
+    fontSize: 14,
   },
 });

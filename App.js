@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 import AddScreen from './screens/AddScreen';
 import MapScreen from './screens/MapScreen';
@@ -37,9 +38,14 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
-          <Stack.Screen name="Login">
-            {props => <LoginScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
-          </Stack.Screen>
+          <>
+            <Stack.Screen name="Login">
+              {props => <LoginScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
+            </Stack.Screen>
+            <Stack.Screen name="Register">
+              {props => <RegisterScreen {...props} />}
+            </Stack.Screen>
+          </>
         ) : (
           <>
             <Stack.Screen name="Home">

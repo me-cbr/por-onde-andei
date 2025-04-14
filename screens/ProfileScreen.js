@@ -9,6 +9,7 @@ import {
     Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -33,13 +34,28 @@ export default function ProfileScreen({ setIsAuthenticated }) {
         loadUserData();
     }, []);
 
-    const pickImage = async () => {
-        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (!permission.granted) {
-            Alert.alert('Permissão negada', 'Você precisa permitir acesso à galeria.');
-            return;
-        }
+    const requestAllPermissions = async () => {
+        try {
+            const mediaPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (mediaPermission.status !== 'granted') {
+                Alert.alert('Permissão de Galeria', 'Você precisa permitir o acesso à galeria.');
+            }
 
+            const locationPermission = await Location.requestForegroundPermissionsAsync();
+            if (locationPermission.status !== 'granted') {
+                Alert.alert('Permissão de Localização', 'Você precisa permitir o acesso à localização.');
+            }
+
+            
+
+            Alert.alert('Permissões', 'Todas as permissões foram solicitadas!');
+        } catch (error) {
+            console.error('Erro ao solicitar permissões: ', error);
+            Alert.alert('Erro', 'Não foi possível solicitar as permissões.');
+        }
+    };
+
+    const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -111,6 +127,10 @@ export default function ProfileScreen({ setIsAuthenticated }) {
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                     <AntDesign name="logout" size={20} color="white" />
                     <Text style={styles.logoutText}>Logout</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.permissionButton} onPress={requestAllPermissions}>
+                    <Text style={styles.permissionButtonText}>Pedir Permissões</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -189,6 +209,17 @@ const styles = StyleSheet.create({
     logoutText: {
         color: 'white',
         marginLeft: 8,
+        fontSize: 16,
+    },
+    permissionButton: {
+        backgroundColor: '#2196F3',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 8,
+        marginTop: 20,
+    },
+    permissionButtonText: {
+        color: '#fff',
         fontSize: 16,
     },
 });
