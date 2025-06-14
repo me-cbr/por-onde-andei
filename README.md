@@ -1,26 +1,27 @@
 # README - Por Onde Andei 📍📱
 
 ## Descrição do Projeto
-Aplicativo mobile para registrar locais visitados com fotos e geolocalização automática. Permite visualizar os registros em lista ou em um mapa interativo.
+Aplicativo desenvolvido em **React Native com Expo** para registrar e visualizar locais visitados, funcionando como um diário de viagens ou mapa de memórias.
 
 ## 📌 Funcionalidades
 
+- ✅ Cadastro e autenticação de usuários
 - 📸 Captura de fotos com a câmera do dispositivo
 - 🗺️ Registro automático da localização
 - 📅 Data e hora automaticamente associadas
 - 🔒 Autenticação por biometria (Face ID/Touch ID)
 - 🏠 Listagem dos locais visitados
+- 🗄️ Armazenamento local com SQLite
 - 🗺️ Visualização em mapa com marcadores
 
 ## 🚀 Tecnologias Utilizadas
 
-- React Native com Expo
-- Expo Camera (para captura de fotos)
-- Expo Location (para geolocalização)
-- React Navigation (navegação entre telas)
-- React Native Maps (mapa interativo)
-- AsyncStorage (armazenamento local)
-- Expo Local Authentication (biometria
+
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite/)
+- [React Navigation](https://reactnavigation.org/)
+- [Expo Image Picker](https://docs.expo.dev/versions/latest/sdk/imagepicker/)
 
 ## 📦 Como Executar o Projeto
 
@@ -52,18 +53,31 @@ Aplicativo mobile para registrar locais visitados com fotos e geolocalização a
 ## 📂 Estrutura do Projeto
 
 ```
-por-onde-passei/
-├── assets/            # Ícones e imagens
+por-onde-andei/
+├── assets/            # Imagens e ícones
 ├── components/        # Componentes reutilizáveis
-├── screens/           # Telas do aplicativo
-│   ├── HomeScreen.js  # Lista de locais
-│   ├── AddScreen.js   # Adicionar novo local
-│   └── MapScreen.js   # Visualização em mapa
-├── navigation/        # Configuração de navegação
-├── App.js             # Ponto de entrada
-└── app.json           # Configuração do Expo
+├── database/          # Configuração do SQLite
+├── screens/           # Telas da aplicação
+├── App.js             # Arquivo principal
+├── app.json           # Configurações do Expo
+└── README.md          # Documentação do projeto
 ```
 
+## 🐞 Possíveis Problemas
+
+### Erro com `expo-sqlite`:
+
+Caso apareça o erro:
+
+```
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'expo-sqlite'
+```
+
+Execute:
+
+```bash
+npx expo install expo-sqlite
+```
 
 ## Configuração
 O arquivo app.json contém todas as configurações necessárias, incluindo:
@@ -76,10 +90,10 @@ O arquivo app.json contém todas as configurações necessárias, incluindo:
 ## 📄 Licença
 Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
-## 👥 Desenvolvedores
-- Maria Eduarda Coelho - [mecoelhodev@gmail.com](mailto:mecoelhodev@gmail.com)
-- Lucas Moyses - [lucasmoyses88@gmail.com](mailto:mecoelhodev@gmail.com)
-- Eduardo Paixão - [ra202210694@univassouras.edu.br](ra202210694@univassouras.edu.br)
+## 👥 Desenvolvedora
+- **Maria Coelho**  
+[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/me-cbr)
+
 
 ## 🤝 Contribuição
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
