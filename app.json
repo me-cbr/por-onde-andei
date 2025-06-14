@@ -42,7 +42,8 @@
     "plugins": [
       "expo-image-picker",
       "expo-location",
-      "expo-local-authentication"
+      "expo-local-authentication",
+      "expo-sqlite"
     ],
     "extra": {
       "eas": {
