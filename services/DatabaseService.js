@@ -9,7 +9,6 @@ class DatabaseService {
     try {
       this.db = await SQLite.openDatabaseAsync("porondeandei.db")
       await this.createTables()
-      console.log("Database initialized successfully")
     } catch (error) {
       console.error("Error initializing database:", error)
       throw error
@@ -63,7 +62,6 @@ class DatabaseService {
 
       await this.migrateDatabase()
 
-      console.log("Tables created and migrated successfully")
     } catch (error) {
       console.error("Error creating tables:", error)
       throw error
@@ -72,16 +70,11 @@ class DatabaseService {
 
   async migrateDatabase() {
     try {
-      console.log("Starting database migration...")
-
       await this.migrateUsersTable()
 
       await this.migratePlacesTable()
-
-      console.log("Database migration completed successfully")
     } catch (error) {
       console.error("Error during database migration:", error)
-      console.log("Attempting to recreate tables...")
       await this.recreateTables()
     }
   }
@@ -89,31 +82,23 @@ class DatabaseService {
   async migrateUsersTable() {
     try {
       const usersTableInfo = await this.db.getAllAsync("PRAGMA table_info(users)")
-      console.log("Users table structure:", usersTableInfo)
 
       const hasBiometricColumn = usersTableInfo.some((column) => column.name === "biometric_enabled")
       const hasImageColumn = usersTableInfo.some((column) => column.name === "image")
       const hasCreatedAtColumn = usersTableInfo.some((column) => column.name === "created_at")
 
       if (!hasBiometricColumn) {
-        console.log("Adding missing biometric_enabled column to users table...")
         await this.db.execAsync("ALTER TABLE users ADD COLUMN biometric_enabled INTEGER DEFAULT 0")
-        console.log("Biometric_enabled column added successfully")
       }
 
       if (!hasImageColumn) {
-        console.log("Adding missing image column to users table...")
         await this.db.execAsync("ALTER TABLE users ADD COLUMN image TEXT")
-        console.log("Image column added successfully")
       }
 
       if (!hasCreatedAtColumn) {
-        console.log("Adding missing created_at column to users table...")
         await this.db.execAsync("ALTER TABLE users ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP")
-        console.log("Created_at column added successfully")
       }
 
-      console.log("Users table migration completed")
     } catch (error) {
       console.error("Error migrating users table:", error)
       throw error
@@ -123,7 +108,6 @@ class DatabaseService {
   async migratePlacesTable() {
     try {
       const placesTableInfo = await this.db.getAllAsync("PRAGMA table_info(places)")
-      console.log("Places table structure:", placesTableInfo)
 
       const hasAddressColumn = placesTableInfo.some((column) => column.name === "address")
       const hasPhotoDateColumn = placesTableInfo.some((column) => column.name === "photo_date")
@@ -133,42 +117,29 @@ class DatabaseService {
       const hasCreatedAtColumn = placesTableInfo.some((column) => column.name === "created_at")
 
       if (!hasAddressColumn) {
-        console.log("Adding missing address column to places table...")
         await this.db.execAsync("ALTER TABLE places ADD COLUMN address TEXT")
-        console.log("Address column added successfully")
       }
 
       if (!hasPhotoDateColumn) {
-        console.log("Adding missing photo_date column to places table...")
         await this.db.execAsync("ALTER TABLE places ADD COLUMN photo_date TEXT NOT NULL DEFAULT ''")
-        console.log("Photo_date column added successfully")
       }
 
       if (!hasIsFavoriteColumn) {
-        console.log("Adding missing is_favorite column to places table...")
         await this.db.execAsync("ALTER TABLE places ADD COLUMN is_favorite INTEGER DEFAULT 0")
-        console.log("Is_favorite column added successfully")
       }
 
       if (!hasLatitudeColumn) {
-        console.log("Adding missing latitude column to places table...")
         await this.db.execAsync("ALTER TABLE places ADD COLUMN latitude REAL")
-        console.log("Latitude column added successfully")
       }
 
       if (!hasLongitudeColumn) {
-        console.log("Adding missing longitude column to places table...")
         await this.db.execAsync("ALTER TABLE places ADD COLUMN longitude REAL")
-        console.log("Longitude column added successfully")
       }
 
       if (!hasCreatedAtColumn) {
-        console.log("Adding missing created_at column to places table...")
         await this.db.execAsync("ALTER TABLE places ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP")
-        console.log("Created_at column added successfully")
       }
 
-      console.log("Places table migration completed")
     } catch (error) {
       console.error("Error migrating places table:", error)
       throw error
@@ -177,8 +148,6 @@ class DatabaseService {
 
   async recreateTables() {
     try {
-      console.log("Recreating tables with correct structure...")
-
       const existingUsers = await this.db.getAllAsync("SELECT * FROM users").catch(() => [])
       const existingPlaces = await this.db
         .getAllAsync("SELECT id, title, photo, date, user_id FROM places")
@@ -281,7 +250,6 @@ class DatabaseService {
         ])
       }
 
-      console.log("Tables recreated successfully with data preserved")
     } catch (error) {
       console.error("Error recreating tables:", error)
       throw error
@@ -295,7 +263,6 @@ class DatabaseService {
         name,
         password,
       ])
-      console.log("User created with ID:", result.lastInsertRowId)
       return result.lastInsertRowId
     } catch (error) {
       console.error("Error creating user:", error)
@@ -306,7 +273,6 @@ class DatabaseService {
   async getUserByEmail(email) {
     try {
       const result = await this.db.getFirstAsync("SELECT * FROM users WHERE email = ?", [email])
-      console.log("User found by email:", result ? "Yes" : "No")
       return result
     } catch (error) {
       console.error("Error getting user by email:", error)
@@ -321,7 +287,6 @@ class DatabaseService {
       } else {
         await this.db.runAsync("UPDATE users SET name = ? WHERE id = ?", [name, userId])
       }
-      console.log("User profile updated for ID:", userId)
       return true
     } catch (error) {
       console.error("Error updating user profile:", error)
@@ -332,7 +297,6 @@ class DatabaseService {
   async enableBiometric(userId) {
     try {
       await this.db.runAsync("UPDATE users SET biometric_enabled = 1 WHERE id = ?", [userId])
-      console.log("Biometric enabled for user ID:", userId)
       return true
     } catch (error) {
       console.error("Error enabling biometric:", error)
@@ -354,7 +318,6 @@ class DatabaseService {
     try {
       await this.db.runAsync("DELETE FROM user_session WHERE user_id = ?", [userId])
       await this.db.runAsync("INSERT INTO user_session (user_id) VALUES (?)", [userId])
-      console.log("Session created for user ID:", userId)
       return true
     } catch (error) {
       console.error("Error creating session:", error)
@@ -371,7 +334,6 @@ class DatabaseService {
         ORDER BY s.last_login DESC
         LIMIT 1
       `)
-      console.log("Current user:", result ? `ID: ${result.id}, Email: ${result.email}` : "None")
       return result
     } catch (error) {
       console.error("Error getting current user:", error)
@@ -382,7 +344,6 @@ class DatabaseService {
   async logout() {
     try {
       await this.db.runAsync("DELETE FROM user_session")
-      console.log("User logged out successfully")
       return true
     } catch (error) {
       console.error("Error logging out:", error)
@@ -394,7 +355,6 @@ class DatabaseService {
     try {
       const result = await this.db.getFirstAsync("SELECT COUNT(*) as count FROM user_session WHERE is_logged_in = 1")
       const isLoggedIn = result.count > 0
-      console.log("User logged in:", isLoggedIn)
       return isLoggedIn
     } catch (error) {
       console.error("Error checking login status:", error)
@@ -423,7 +383,6 @@ class DatabaseService {
         [id, title, photo, address, latitude, longitude, date, photoDate, userId],
       )
 
-      console.log("Place created successfully with ID:", id)
       return id
     } catch (error) {
       console.error("Error creating place:", error)
@@ -439,7 +398,6 @@ class DatabaseService {
         placeId,
         userId,
       ])
-      console.log("Place updated:", placeId)
       return true
     } catch (error) {
       console.error("Error updating place:", error)
@@ -460,7 +418,6 @@ class DatabaseService {
         placeId,
         userId,
       ])
-      console.log("Place favorite toggled:", placeId, "New status:", newFavoriteStatus)
       return newFavoriteStatus === 1
     } catch (error) {
       console.error("Error toggling favorite:", error)
@@ -470,17 +427,9 @@ class DatabaseService {
 
   async getPlacesByUser(userId) {
     try {
-      console.log("Getting places for user ID:", userId)
-
       const result = await this.db.getAllAsync("SELECT * FROM places WHERE user_id = ? ORDER BY created_at DESC", [
         userId,
       ])
-
-      console.log("Raw places from database:", result.length, "places found")
-
-      if (result.length > 0) {
-        console.log("First place data:", result[0])
-      }
 
       const places = result.map((place) => ({
         id: place.id,
@@ -499,7 +448,6 @@ class DatabaseService {
         isFavorite: place.is_favorite === 1,
       }))
 
-      console.log("Processed places:", places.length, "places")
       return places
     } catch (error) {
       console.error("Error getting places by user:", error)
@@ -509,14 +457,10 @@ class DatabaseService {
 
   async getFavoritesByUser(userId) {
     try {
-      console.log("Getting favorite places for user ID:", userId)
-
       const result = await this.db.getAllAsync(
         "SELECT * FROM places WHERE user_id = ? AND is_favorite = 1 ORDER BY created_at DESC",
         [userId],
       )
-
-      console.log("Raw favorite places from database:", result.length, "favorites found")
 
       const favorites = result.map((place) => ({
         id: place.id,
@@ -535,7 +479,6 @@ class DatabaseService {
         isFavorite: place.is_favorite === 1,
       }))
 
-      console.log("Processed favorite places:", favorites.length, "favorites")
       return favorites
     } catch (error) {
       console.error("Error getting favorite places by user:", error)
@@ -546,7 +489,6 @@ class DatabaseService {
   async deletePlace(placeId, userId) {
     try {
       await this.db.runAsync("DELETE FROM places WHERE id = ? AND user_id = ?", [placeId, userId])
-      console.log("Place deleted:", placeId)
       return true
     } catch (error) {
       console.error("Error deleting place:", error)
@@ -557,7 +499,6 @@ class DatabaseService {
   async getAllPlaces() {
     try {
       const result = await this.db.getAllAsync("SELECT * FROM places ORDER BY created_at DESC")
-      console.log("All places count:", result.length)
 
       return result.map((place) => ({
         id: place.id,
@@ -586,7 +527,6 @@ class DatabaseService {
       await this.db.execAsync("DELETE FROM places")
       await this.db.execAsync("DELETE FROM user_session")
       await this.db.execAsync("DELETE FROM users")
-      console.log("All data cleared successfully")
       return true
     } catch (error) {
       console.error("Error clearing all data:", error)
@@ -603,15 +543,6 @@ class DatabaseService {
       const usersStructure = await this.db.getAllAsync("PRAGMA table_info(users)")
       const placesStructure = await this.db.getAllAsync("PRAGMA table_info(places)")
       const sessionsStructure = await this.db.getAllAsync("PRAGMA table_info(user_session)")
-
-      console.log("=== DATABASE DEBUG ===")
-      console.log("Users:", users)
-      console.log("Places:", places)
-      console.log("Sessions:", sessions)
-      console.log("Users table structure:", usersStructure)
-      console.log("Places table structure:", placesStructure)
-      console.log("Sessions table structure:", sessionsStructure)
-      console.log("=== END DEBUG ===")
 
       return { users, places, sessions, usersStructure, placesStructure, sessionsStructure }
     } catch (error) {

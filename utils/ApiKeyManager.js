@@ -13,7 +13,6 @@ class ApiKeyManager {
       if (apiKey) {
         locationService.setApiKey(apiKey)
         googleMapsService.setApiKey(apiKey)
-        console.log("Google Maps API key loaded from storage")
         return apiKey
       }
       return null
@@ -28,7 +27,6 @@ class ApiKeyManager {
       await AsyncStorage.setItem(this.STORAGE_KEY, apiKey)
       locationService.setApiKey(apiKey)
       googleMapsService.setApiKey(apiKey)
-      console.log("Google Maps API key saved")
       return true
     } catch (error) {
       console.error("Error saving API key:", error)
@@ -39,7 +37,6 @@ class ApiKeyManager {
   async removeApiKey() {
     try {
       await AsyncStorage.removeItem(this.STORAGE_KEY)
-      console.log("Google Maps API key removed")
       return true
     } catch (error) {
       console.error("Error removing API key:", error)

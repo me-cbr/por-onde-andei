@@ -43,14 +43,12 @@ class LocationService {
     try {
       const cacheKey = `${latitude.toFixed(6)},${longitude.toFixed(6)}`
       if (this.cache.has(cacheKey)) {
-        console.log("Using cached address for:", cacheKey)
         return this.cache.get(cacheKey)
       }
 
       let address = await this.getAddressFromGoogle(latitude, longitude)
 
       if (!address || address === "Endereço não encontrado") {
-        console.log("Google API failed, using Expo Location as fallback")
         address = await this.getAddressFromExpo(latitude, longitude)
       }
 
@@ -68,13 +66,11 @@ class LocationService {
   async getAddressFromGoogle(latitude, longitude) {
     try {
       if (!this.GOOGLE_API_KEY || this.GOOGLE_API_KEY === "YOUR_GOOGLE_API_KEY_HERE") {
-        console.log("Google API key not configured, using Expo Location")
         return await this.getAddressFromExpo(latitude, longitude)
       }
 
       const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${this.GOOGLE_API_KEY}&language=pt-BR&region=BR`
 
-      console.log("Calling Google Geocoding API...")
       const response = await fetch(url)
       const data = await response.json()
 
@@ -90,10 +86,8 @@ class LocationService {
           formattedAddress = customAddress
         }
 
-        console.log("Google API address found:", formattedAddress)
         return formattedAddress
       } else {
-        console.log("Google API error:", data.status, data.error_message)
         return null
       }
     } catch (error) {
@@ -169,7 +163,6 @@ class LocationService {
 
   async getAddressFromExpo(latitude, longitude) {
     try {
-      console.log("Using Expo Location for address...")
       const addresses = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
@@ -201,7 +194,6 @@ class LocationService {
   async searchPlaces(query) {
     try {
       if (!this.GOOGLE_API_KEY || this.GOOGLE_API_KEY === "YOUR_GOOGLE_API_KEY_HERE") {
-        console.log("Google API key not configured")
         return []
       }
 
@@ -221,7 +213,7 @@ class LocationService {
           },
           rating: place.rating,
           types: place.types,
-        }))
+      }))
       }
 
       return []
@@ -234,7 +226,6 @@ class LocationService {
   async getPlaceDetails(placeId) {
     try {
       if (!this.GOOGLE_API_KEY || this.GOOGLE_API_KEY === "YOUR_GOOGLE_API_KEY_HERE") {
-        console.log("Google API key not configured")
         return null
       }
 
@@ -273,12 +264,10 @@ class LocationService {
 
   clearCache() {
     this.cache.clear()
-    console.log("Location cache cleared")
   }
 
   setApiKey(apiKey) {
     this.GOOGLE_API_KEY = apiKey
-    console.log("Google API key configured")
   }
 }
 
