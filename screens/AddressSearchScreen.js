@@ -40,7 +40,6 @@ function AddressSearchScreen({ navigation, route }) {
       const results = await googleMapsService.autocompleteAddress(searchText, sessionToken)
       setSuggestions(results)
     } catch (error) {
-      console.error("Error searching addresses:", error)
       Alert.alert("Erro", "Não foi possível buscar endereços")
     } finally {
       setIsLoading(false)
@@ -70,7 +69,6 @@ function AddressSearchScreen({ navigation, route }) {
         Alert.alert("Erro", "Não foi possível obter detalhes do endereço")
       }
     } catch (error) {
-      console.error("Error selecting address:", error)
       Alert.alert("Erro", "Erro ao selecionar endereço")
     } finally {
       setIsLoading(false)
@@ -114,7 +112,7 @@ function AddressSearchScreen({ navigation, route }) {
   )
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.fullContainer}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -123,41 +121,44 @@ function AddressSearchScreen({ navigation, route }) {
         <View style={styles.placeholder} />
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#666" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Digite o endereço..."
-            placeholderTextColor="black"
-            value={searchText}
-            onChangeText={setSearchText}
-            autoFocus
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.content}>
+          <View style={styles.searchContainer}>
+            <Ionicons name="search" size={20} color="#666" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Digite o endereço..."
+              placeholderTextColor="gray"
+              value={searchText}
+              onChangeText={setSearchText}
+              autoFocus
+            />
+            {isLoading && <ActivityIndicator size="small" color="#4CAF50" />}
+          </View>
+
+          <TouchableOpacity style={styles.currentLocationButton} onPress={getCurrentLocation}>
+            <Ionicons name="locate" size={20} color="#4CAF50" />
+            <Text style={styles.currentLocationText}>Usar localização atual</Text>
+          </TouchableOpacity>
+
+          <FlatList
+            data={suggestions}
+            renderItem={renderSuggestion}
+            keyExtractor={(item) => item.id}
+            style={styles.suggestionsList}
+            showsVerticalScrollIndicator={false}
           />
-          {isLoading && <ActivityIndicator size="small" color="#4CAF50" />}
         </View>
-
-        <TouchableOpacity style={styles.currentLocationButton} onPress={getCurrentLocation}>
-          <Ionicons name="locate" size={20} color="#4CAF50" />
-          <Text style={styles.currentLocationText}>Usar localização atual</Text>
-        </TouchableOpacity>
-
-        <FlatList
-          data={suggestions}
-          renderItem={renderSuggestion}
-          keyExtractor={(item) => item.id}
-          style={styles.suggestionsList}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  fullContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#4CAF50",
+    paddingTop: 40,
   },
   header: {
     height: 100,
@@ -179,6 +180,10 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 34,
   },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
   content: {
     flex: 1,
     padding: 16,
@@ -197,6 +202,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
     fontSize: 16,
+    color: "black",
   },
   currentLocationButton: {
     flexDirection: "row",

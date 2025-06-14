@@ -35,7 +35,6 @@ export default function EditPlaceScreen({ route, navigation }) {
       }
     } catch (error) {
       Alert.alert("Erro", "Não foi possível atualizar o local")
-      console.error("Error updating place:", error)
     } finally {
       setIsLoading(false)
     }
@@ -55,7 +54,7 @@ export default function EditPlaceScreen({ route, navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.fullContainer}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -64,64 +63,66 @@ export default function EditPlaceScreen({ route, navigation }) {
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.label}>Título *</Text>
-          <TextInput
-            style={styles.input}
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Digite o título do local"
-            maxLength={50}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.labelContainer}>
-            <Text style={styles.label}>Endereço</Text>
-            <TouchableOpacity onPress={handleGetCurrentLocation} style={styles.locationButton}>
-              <Ionicons name="location" size={16} color="#4CAF50" />
-              <Text style={styles.locationButtonText}>Usar localização atual</Text>
-            </TouchableOpacity>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.content}>
+          <View style={styles.section}>
+            <Text style={styles.label}>Título *</Text>
+            <TextInput
+              style={styles.input}
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Digite o título do local"
+              maxLength={50}
+            />
           </View>
-          <TextInput
-            style={[styles.input, styles.addressInput]}
-            value={address}
-            onChangeText={setAddress}
-            placeholder="Digite o endereço"
-            multiline
-          />
-        </View>
 
-        <TouchableOpacity
-          style={[styles.saveButton, isLoading && styles.disabledButton]}
-          onPress={handleSave}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.saveButtonText}>Salvar Alterações</Text>
-          )}
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+          <View style={styles.section}>
+            <View style={styles.labelContainer}>
+              <Text style={styles.label}>Endereço</Text>
+              <TouchableOpacity onPress={handleGetCurrentLocation} style={styles.locationButton}>
+                <Ionicons name="location" size={16} color="#4CAF50" />
+                <Text style={styles.locationButtonText}>Usar localização atual</Text>
+              </TouchableOpacity>
+            </View>
+            <TextInput
+              style={[styles.input, styles.addressInput]}
+              value={address}
+              onChangeText={setAddress}
+              placeholder="Digite o endereço"
+              multiline
+            />
+          </View>
+
+          <TouchableOpacity
+            style={[styles.saveButton, isLoading && styles.disabledButton]}
+            onPress={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.saveButtonText}>Salvar Alterações</Text>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  fullContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#4CAF50",
+    paddingTop: 40,
   },
   header: {
-    height: 100,
+    height: 60,
     backgroundColor: "#4CAF50",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 40,
   },
   backButton: {
     padding: 5,
@@ -133,6 +134,10 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     width: 34,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
   content: {
     flex: 1,

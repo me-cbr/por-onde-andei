@@ -414,7 +414,7 @@ const TestScreen = ({ onDataCleared }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.fullContainer}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -423,110 +423,112 @@ const TestScreen = ({ onDataCleared }) => {
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.configSection}>
-          <Text style={styles.sectionTitle}>Configuração do Teste</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email de teste"
-            value={testEmail}
-            onChangeText={setTestEmail}
-            placeholderTextColor="#999"
-            editable={!isRunning}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Nome de teste"
-            value={testName}
-            onChangeText={setTestName}
-            placeholderTextColor="#999"
-            editable={!isRunning}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Senha de teste"
-            value={testPassword}
-            onChangeText={setTestPassword}
-            placeholderTextColor="#999"
-            secureTextEntry
-            editable={!isRunning}
-          />
-        </View>
-
-        <View style={styles.buttonSection}>
-          <TouchableOpacity style={[styles.button, styles.primaryButton]} onPress={runAllTests} disabled={isRunning}>
-            {isRunning ? (
-              <>
-                <ActivityIndicator color="#FFFFFF" />
-                <Text style={styles.buttonText}>Executando...</Text>
-              </>
-            ) : (
-              <>
-                <Ionicons name="play" size={20} color="#FFFFFF" />
-                <Text style={styles.buttonText}>Executar Todos os Testes</Text>
-              </>
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
-              style={[styles.button, styles.secondaryButton]}
-              onPress={clearResults}
-              disabled={isRunning}
-            >
-              <Ionicons name="refresh" size={16} color="#4CAF50" />
-              <Text style={styles.secondaryButtonText}>Limpar</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, styles.secondaryButton]}
-              onPress={clearTestData}
-              disabled={isRunning}
-            >
-              <Ionicons name="trash" size={16} color="#4CAF50" />
-              <Text style={styles.secondaryButtonText}>Limpar Dados</Text>
-            </TouchableOpacity>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.configSection}>
+            <Text style={styles.sectionTitle}>Configuração do Teste</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Email de teste"
+              value={testEmail}
+              onChangeText={setTestEmail}
+              placeholderTextColor="#999"
+              editable={!isRunning}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Nome de teste"
+              value={testName}
+              onChangeText={setTestName}
+              placeholderTextColor="#999"
+              editable={!isRunning}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Senha de teste"
+              value={testPassword}
+              onChangeText={setTestPassword}
+              placeholderTextColor="#999"
+              secureTextEntry
+              editable={!isRunning}
+            />
           </View>
-        </View>
 
-        <View style={styles.resultsSection}>
-          <Text style={styles.sectionTitle}>
-            Resultados dos Testes {testResults.length > 0 && `(${testResults.length})`}
-          </Text>
-          {testResults.length === 0 ? (
-            <Text style={styles.noResults}>Nenhum teste executado ainda</Text>
-          ) : (
-            testResults.map((result) => (
-              <View key={result.id} style={styles.resultItem}>
-                <View style={styles.resultHeader}>
-                  <Ionicons name={getStatusIcon(result.status)} size={20} color={getStatusColor(result.status)} />
-                  <Text style={styles.resultTest}>{result.test}</Text>
-                  <Text style={styles.resultTime}>{result.timestamp}</Text>
+          <View style={styles.buttonSection}>
+            <TouchableOpacity style={[styles.button, styles.primaryButton]} onPress={runAllTests} disabled={isRunning}>
+              {isRunning ? (
+                <>
+                  <ActivityIndicator color="#FFFFFF" />
+                  <Text style={styles.buttonText}>Executando...</Text>
+                </>
+              ) : (
+                <>
+                  <Ionicons name="play" size={20} color="#FFFFFF" />
+                  <Text style={styles.buttonText}>Executar Todos os Testes</Text>
+                </>
+              )}
+            </TouchableOpacity>
+
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={[styles.button, styles.secondaryButton]}
+                onPress={clearResults}
+                disabled={isRunning}
+              >
+                <Ionicons name="refresh" size={16} color="#4CAF50" />
+                <Text style={styles.secondaryButtonText}>Limpar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.button, styles.secondaryButton]}
+                onPress={clearTestData}
+                disabled={isRunning}
+              >
+                <Ionicons name="trash" size={16} color="#4CAF50" />
+                <Text style={styles.secondaryButtonText}>Limpar Dados</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.resultsSection}>
+            <Text style={styles.sectionTitle}>
+              Resultados dos Testes {testResults.length > 0 && `(${testResults.length})`}
+            </Text>
+            {testResults.length === 0 ? (
+              <Text style={styles.noResults}>Nenhum teste executado ainda</Text>
+            ) : (
+              testResults.map((result) => (
+                <View key={result.id} style={styles.resultItem}>
+                  <View style={styles.resultHeader}>
+                    <Ionicons name={getStatusIcon(result.status)} size={20} color={getStatusColor(result.status)} />
+                    <Text style={styles.resultTest}>{result.test}</Text>
+                    <Text style={styles.resultTime}>{result.timestamp}</Text>
+                  </View>
+                  <Text style={[styles.resultMessage, { color: getStatusColor(result.status) }]}>{result.message}</Text>
+                  {result.details && <Text style={styles.resultDetails}>{result.details}</Text>}
                 </View>
-                <Text style={[styles.resultMessage, { color: getStatusColor(result.status) }]}>{result.message}</Text>
-                {result.details && <Text style={styles.resultDetails}>{result.details}</Text>}
-              </View>
-            ))
-          )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+              ))
+            )}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  fullContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#4CAF50",
+    paddingTop: 40,
   },
   header: {
-    height: 90,
+    height: 60,
     backgroundColor: "#4CAF50",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 30,
   },
   backButton: {
     padding: 5,
@@ -538,6 +540,10 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     width: 34,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
   content: {
     flex: 1,

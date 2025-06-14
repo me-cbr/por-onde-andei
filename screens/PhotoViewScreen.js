@@ -38,7 +38,7 @@ export default function PhotoViewScreen({ route, navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.fullContainer}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -51,113 +51,114 @@ export default function PhotoViewScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <TouchableOpacity onPress={() => setShowFullImage(true)} style={styles.imageContainer} activeOpacity={0.8}>
-          <Image source={{ uri: place.photo }} style={styles.image} />
-          <View style={styles.expandIcon}>
-            <Ionicons name="expand" size={24} color="white" />
-          </View>
-          <View style={styles.zoomHint}>
-            <Text style={styles.zoomHintText}>Toque para ampliar</Text>
-          </View>
-        </TouchableOpacity>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <TouchableOpacity onPress={() => setShowFullImage(true)} style={styles.imageContainer} activeOpacity={0.8}>
+            <Image source={{ uri: place.photo }} style={styles.image} />
+            <View style={styles.expandIcon}>
+              <Ionicons name="expand" size={24} color="white" />
+            </View>
+            <View style={styles.zoomHint}>
+              <Text style={styles.zoomHintText}>Toque para ampliar</Text>
+            </View>
+          </TouchableOpacity>
 
-        <View style={styles.infoContainer}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{place.title}</Text>
-            {place.isFavorite && <Ionicons name="heart" size={24} color="#ff4444" />}
-          </View>
-
-          <View style={styles.dateContainer}>
-            <View style={styles.dateItem}>
-              <Ionicons name="calendar-outline" size={16} color="#666" />
-              <Text style={styles.dateLabel}>Adicionado em:</Text>
-              <Text style={styles.dateText}>{formatDate(place.date)}</Text>
+          <View style={styles.infoContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{place.title}</Text>
+              {place.isFavorite && <Ionicons name="heart" size={24} color="#ff4444" />}
             </View>
 
-            {place.photoDate && (
+            <View style={styles.dateContainer}>
               <View style={styles.dateItem}>
-                <Ionicons name="camera-outline" size={16} color="#666" />
-                <Text style={styles.dateLabel}>Foto tirada em:</Text>
-                <Text style={styles.dateText}>{formatDate(place.photoDate)}</Text>
+                <Ionicons name="calendar-outline" size={16} color="#666" />
+                <Text style={styles.dateLabel}>Adicionado em:</Text>
+                <Text style={styles.dateText}>{formatDate(place.date)}</Text>
+              </View>
+
+              {place.photoDate && (
+                <View style={styles.dateItem}>
+                  <Ionicons name="camera-outline" size={16} color="#666" />
+                  <Text style={styles.dateLabel}>Foto tirada em:</Text>
+                  <Text style={styles.dateText}>{formatDate(place.photoDate)}</Text>
+                </View>
+              )}
+            </View>
+
+            {place.address && (
+              <View style={styles.addressContainer}>
+                <Ionicons name="location-outline" size={20} color="#4CAF50" />
+                <View style={styles.addressTextContainer}>
+                  <Text style={styles.addressLabel}>Localização:</Text>
+                  <Text style={styles.addressText}>{place.address}</Text>
+                </View>
+              </View>
+            )}
+
+            {place.location && (
+              <View style={styles.coordinatesContainer}>
+                <Ionicons name="navigate-outline" size={16} color="#888" />
+                <Text style={styles.coordinatesText}>
+                  {place.location.latitude.toFixed(6)}, {place.location.longitude.toFixed(6)}
+                </Text>
+                <TouchableOpacity onPress={handleOpenMap} style={styles.viewMapButton}>
+                  <Ionicons name="map-outline" size={16} color="#4CAF50" />
+                  <Text style={styles.viewMapText}>Ver no Mapa</Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
+        </ScrollView>
 
-          {place.address && (
-            <View style={styles.addressContainer}>
-              <Ionicons name="location-outline" size={20} color="#4CAF50" />
-              <View style={styles.addressTextContainer}>
-                <Text style={styles.addressLabel}>Localização:</Text>
-                <Text style={styles.addressText}>{place.address}</Text>
-              </View>
-            </View>
-          )}
-
-          {place.location && (
-            <View style={styles.coordinatesContainer}>
-              <Ionicons name="navigate-outline" size={16} color="#888" />
-              <Text style={styles.coordinatesText}>
-                {place.location.latitude.toFixed(6)}, {place.location.longitude.toFixed(6)}
-              </Text>
-              <TouchableOpacity onPress={handleOpenMap} style={styles.viewMapButton}>
-                <Ionicons name="map-outline" size={16} color="#4CAF50" />
-                <Text style={styles.viewMapText}>Ver no Mapa</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      </ScrollView>
-
-      {/* Full Image Modal with Zoom */}
-      <Modal
-        visible={showFullImage}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowFullImage(false)}
-        statusBarTranslucent={true}
-      >
-        <View style={styles.modalContainer}>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setShowFullImage(false)}>
-            <Ionicons name="close" size={30} color="white" />
-          </TouchableOpacity>
-
-          <ScrollView
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.scrollContent}
-            maximumZoomScale={3}
-            minimumZoomScale={1}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            bouncesZoom={true}
-          >
-            <TouchableOpacity activeOpacity={1} style={styles.imageWrapper}>
-              <Image source={{ uri: place.photo }} style={styles.fullImage} resizeMode="contain" />
+        <Modal
+          visible={showFullImage}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowFullImage(false)}
+          statusBarTranslucent={true}
+        >
+          <View style={styles.modalContainer}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setShowFullImage(false)}>
+              <Ionicons name="close" size={30} color="white" />
             </TouchableOpacity>
-          </ScrollView>
 
-          <View style={styles.zoomInstructions}>
-            <Text style={styles.zoomInstructionsText}>Pinça para dar zoom • Toque para fechar</Text>
+            <ScrollView
+              style={styles.scrollContainer}
+              contentContainerStyle={styles.scrollContent}
+              maximumZoomScale={3}
+              minimumZoomScale={1}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              bouncesZoom={true}
+            >
+              <TouchableOpacity activeOpacity={1} style={styles.imageWrapper}>
+                <Image source={{ uri: place.photo }} style={styles.fullImage} resizeMode="contain" />
+              </TouchableOpacity>
+            </ScrollView>
+
+            <View style={styles.zoomInstructions}>
+              <Text style={styles.zoomInstructionsText}>Pinça para dar zoom • Toque para fechar</Text>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+        </Modal>
+      </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  fullContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#4CAF50",
+    paddingTop: 40,
   },
   header: {
-    height: 100,
+    height: 60,
     backgroundColor: "#4CAF50",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 40,
   },
   backButton: {
     padding: 5,
@@ -172,6 +173,10 @@ const styles = StyleSheet.create({
   },
   mapButton: {
     padding: 5,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
   content: {
     flex: 1,

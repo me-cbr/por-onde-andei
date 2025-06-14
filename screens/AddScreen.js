@@ -181,7 +181,7 @@ export default function AddScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.fullContainer}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -190,100 +190,102 @@ export default function AddScreen({ navigation }) {
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={true}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <TouchableOpacity style={styles.photoContainer} onPress={showImagePicker} disabled={isLoading}>
-          {photo ? (
-            <View style={styles.photoWrapper}>
-              <Image source={{ uri: photo }} style={styles.photo} />
-              <TouchableOpacity style={styles.changePhotoButton} onPress={showImagePicker}>
-                <Ionicons name="camera" size={20} color="white" />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.photoPlaceholder}>
-              {isLoading ? (
-                <>
-                  <ActivityIndicator size="large" color="#4CAF50" />
-                  <Text style={styles.loadingText}>Processando...</Text>
-                </>
-              ) : (
-                <>
-                  <Ionicons name="add-circle-outline" size={60} color="#4CAF50" />
-                  <Text style={styles.placeholderText}>Adicionar Foto</Text>
-                  <Text style={styles.placeholderSubtext}>Toque para escolher da câmera ou galeria</Text>
-                </>
-              )}
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={true}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <TouchableOpacity style={styles.photoContainer} onPress={showImagePicker} disabled={isLoading}>
+            {photo ? (
+              <View style={styles.photoWrapper}>
+                <Image source={{ uri: photo }} style={styles.photo} />
+                <TouchableOpacity style={styles.changePhotoButton} onPress={showImagePicker}>
+                  <Ionicons name="camera" size={20} color="white" />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.photoPlaceholder}>
+                {isLoading ? (
+                  <>
+                    <ActivityIndicator size="large" color="#4CAF50" />
+                    <Text style={styles.loadingText}>Processando...</Text>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="add-circle-outline" size={60} color="#4CAF50" />
+                    <Text style={styles.placeholderText}>Adicionar Foto</Text>
+                    <Text style={styles.placeholderSubtext}>Toque para escolher da câmera ou galeria</Text>
+                  </>
+                )}
+              </View>
+            )}
+          </TouchableOpacity>
+
+          {photoDate && (
+            <View style={styles.photoInfo}>
+              <Ionicons name="time-outline" size={16} color="#666" />
+              <Text style={styles.photoDateText}>Foto tirada em: {new Date(photoDate).toLocaleString("pt-BR")}</Text>
             </View>
           )}
-        </TouchableOpacity>
 
-        {photoDate && (
-          <View style={styles.photoInfo}>
-            <Ionicons name="time-outline" size={16} color="#666" />
-            <Text style={styles.photoDateText}>Foto tirada em: {new Date(photoDate).toLocaleString("pt-BR")}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Título do local (obrigatório)"
+            placeholderTextColor="gray"
+            value={title}
+            onChangeText={setTitle}
+            maxLength={50}
+          />
+
+          <View style={styles.addressSection}>
+            <View style={styles.addressHeader}>
+              <Text style={styles.addressLabel}>Endereço</Text>
+              <TouchableOpacity onPress={handleSearchAddress} style={styles.searchAddressButton}>
+                <Ionicons name="search" size={16} color="#4CAF50" />
+                <Text style={styles.searchAddressText}>Buscar</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.addressContainer}>
+              <Ionicons name="location-outline" size={20} color="#4CAF50" />
+              <TextInput
+                style={styles.addressInput}
+                placeholder="Endereço será preenchido automaticamente"
+                placeholderTextColor="gray"
+                value={address}
+                onChangeText={setAddress}
+                multiline
+              />
+            </View>
           </View>
-        )}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Título do local (obrigatório)"
-          placeholderTextColor="gray"
-          value={title}
-          onChangeText={setTitle}
-          maxLength={50}
-        />
-
-        <View style={styles.addressSection}>
-          <View style={styles.addressHeader}>
-            <Text style={styles.addressLabel}>Endereço</Text>
-            <TouchableOpacity onPress={handleSearchAddress} style={styles.searchAddressButton}>
-              <Ionicons name="search" size={16} color="#4CAF50" />
-              <Text style={styles.searchAddressText}>Buscar</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.addressContainer}>
-            <Ionicons name="location-outline" size={20} color="#4CAF50" />
-            <TextInput
-              style={styles.addressInput}
-              placeholder="Endereço será preenchido automaticamente"
-              placeholderTextColor="gray"
-              value={address}
-              onChangeText={setAddress}
-              multiline
-            />
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={[styles.saveButton, (!photo || !title.trim()) && styles.disabledButton]}
-          onPress={handleSavePlace}
-          disabled={!photo || !title.trim() || isLoading}
-        >
-          {isLoading ? <ActivityIndicator color="white" /> : <Text style={styles.saveButtonText}>Salvar Local</Text>}
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+          <TouchableOpacity
+            style={[styles.saveButton, (!photo || !title.trim()) && styles.disabledButton]}
+            onPress={handleSavePlace}
+            disabled={!photo || !title.trim() || isLoading}
+          >
+            {isLoading ? <ActivityIndicator color="white" /> : <Text style={styles.saveButtonText}>Salvar Local</Text>}
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  fullContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#4CAF50",
+    paddingTop: 40,
   },
   header: {
-    height: 100,
+    height: 60,
     backgroundColor: "#4CAF50",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 40,
   },
   backButton: {
     padding: 5,
@@ -295,6 +297,10 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     width: 34,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
   content: {
     flex: 1,

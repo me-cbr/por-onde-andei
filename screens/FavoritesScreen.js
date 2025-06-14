@@ -100,15 +100,6 @@ export default function FavoritesScreen({ navigation, setIsAuthenticated }) {
     navigation.navigate("PhotoView", { place })
   }
 
-  const handleLogout = async () => {
-    try {
-      await databaseService.logout()
-      setIsAuthenticated(false)
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível fazer logout")
-    }
-  }
-
   const handleViewAllOnMap = () => {
     if (favorites.length > 0) {
       navigation.navigate("Map", { places: favorites })
@@ -201,7 +192,7 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   header: {
-    height: 50,
+    height: 60,
     backgroundColor: "#4CAF50",
     flexDirection: "row",
     alignItems: "center",
