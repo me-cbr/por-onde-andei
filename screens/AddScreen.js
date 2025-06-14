@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import {
   View,
@@ -36,13 +34,8 @@ export default function AddScreen({ navigation }) {
 
   const handleTakePhoto = async () => {
     try {
-      console.log("Starting camera process...")
-
       const cameraAvailable = await ImagePicker.getCameraPermissionsAsync()
-      console.log("Camera permissions status:", cameraAvailable)
-
       const { status } = await ImagePicker.requestCameraPermissionsAsync()
-      console.log("Camera permission request result:", status)
 
       if (status !== "granted") {
         Alert.alert(
@@ -66,23 +59,14 @@ export default function AddScreen({ navigation }) {
         base64: false,
       })
 
-      console.log("Camera result:", result)
-
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const imageUri = result.assets[0].uri
-        console.log("Image URI:", imageUri)
-
         setPhoto(imageUri)
         setPhotoDate(new Date().toISOString())
-
         await getCurrentLocation()
-
         Alert.alert("Sucesso", "Foto capturada com sucesso!")
-      } else {
-        console.log("Camera operation was canceled")
       }
     } catch (error) {
-      console.error("Error taking photo:", error)
       Alert.alert("Erro na Câmera", `Não foi possível tirar a foto. Erro: ${error.message || "Erro desconhecido"}`, [
         { text: "OK" },
       ])
@@ -93,13 +77,8 @@ export default function AddScreen({ navigation }) {
 
   const handlePickFromGallery = async () => {
     try {
-      console.log("Starting gallery process...")
-
       const galleryPermission = await ImagePicker.getMediaLibraryPermissionsAsync()
-      console.log("Gallery permissions status:", galleryPermission)
-
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
-      console.log("Gallery permission request result:", status)
 
       if (status !== "granted") {
         Alert.alert(
@@ -119,23 +98,14 @@ export default function AddScreen({ navigation }) {
         base64: false,
       })
 
-      console.log("Gallery result:", result)
-
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const imageUri = result.assets[0].uri
-        console.log("Image URI:", imageUri)
-
         setPhoto(imageUri)
         setPhotoDate(new Date().toISOString())
-
         await getCurrentLocation()
-
         Alert.alert("Sucesso", "Foto selecionada com sucesso!")
-      } else {
-        console.log("Gallery selection was canceled")
       }
     } catch (error) {
-      console.error("Error picking from gallery:", error)
       Alert.alert(
         "Erro na Galeria",
         `Não foi possível selecionar a foto. Erro: ${error.message || "Erro desconhecido"}`,
@@ -148,20 +118,14 @@ export default function AddScreen({ navigation }) {
 
   const getCurrentLocation = async () => {
     try {
-      console.log("Getting current location...")
       const currentLocation = await locationService.getCurrentLocation()
-      console.log("Location obtained:", currentLocation)
-
       setLocation(currentLocation)
-
       const addressText = await locationService.getAddressFromCoordinates(
         currentLocation.latitude,
         currentLocation.longitude,
       )
-      console.log("Address obtained:", addressText)
       setAddress(addressText)
     } catch (error) {
-      console.error("Erro na localização:", error)
       Alert.alert(
         "Localização",
         "Não foi possível obter a localização atual. Você pode inserir o endereço manualmente ou usar a busca.",
@@ -211,7 +175,6 @@ export default function AddScreen({ navigation }) {
       Alert.alert("Sucesso", "Local salvo com sucesso!", [{ text: "OK", onPress: () => navigation.navigate("Home") }])
     } catch (error) {
       Alert.alert("Erro", "Não foi possível salvar")
-      console.error("Error saving place:", error)
     } finally {
       setIsLoading(false)
     }
@@ -227,7 +190,11 @@ export default function AddScreen({ navigation }) {
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={true}
+        contentContainerStyle={styles.scrollContent}
+      >
         <TouchableOpacity style={styles.photoContainer} onPress={showImagePicker} disabled={isLoading}>
           {photo ? (
             <View style={styles.photoWrapper}>
@@ -264,6 +231,7 @@ export default function AddScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Título do local (obrigatório)"
+          placeholderTextColor="gray"
           value={title}
           onChangeText={setTitle}
           maxLength={50}
@@ -283,7 +251,7 @@ export default function AddScreen({ navigation }) {
             <TextInput
               style={styles.addressInput}
               placeholder="Endereço será preenchido automaticamente"
-              placeholderTextColor="black"
+              placeholderTextColor="gray"
               value={address}
               onChangeText={setAddress}
               multiline
@@ -330,7 +298,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  scrollContent: {
     padding: 16,
+    paddingBottom: 40,
   },
   photoContainer: {
     width: "100%",
@@ -438,9 +409,9 @@ const styles = StyleSheet.create({
   },
   addressContainer: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     backgroundColor: "white",
-    padding: 16,
+    padding: 10,
     borderRadius: 8,
     marginBottom: 16,
     borderWidth: 1,
@@ -450,7 +421,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
     fontSize: 16,
-    minHeight: 40,
+    minHeight: 30,
   },
   saveButton: {
     backgroundColor: "#4CAF50",

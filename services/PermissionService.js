@@ -28,7 +28,6 @@ class PermissionService {
 
       return results
     } catch (error) {
-      console.error("Error requesting permissions:", error)
       return results
     }
   }

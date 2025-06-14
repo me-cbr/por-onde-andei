@@ -1,13 +1,13 @@
-"use client"
-
 import { useState, useEffect } from "react"
-import { View, ActivityIndicator, StyleSheet, Text } from "react-native"
+import { View, ActivityIndicator, StyleSheet, Text, Alert } from "react-native"
 import { NavigationContainer } from "@react-navigation/native"
 import { createStackNavigator } from "@react-navigation/stack"
+import * as LocalAuthentication from "expo-local-authentication"
 
 import LoginScreen from "./screens/LoginScreen"
 import RegisterScreen from "./screens/RegisterScreen"
 import HomeScreen from "./screens/HomeScreen"
+import FavoritesScreen from "./screens/FavoritesScreen"
 import AddScreen from "./screens/AddScreen"
 import MapScreen from "./screens/MapScreen"
 import ProfileScreen from "./screens/ProfileScreen"
@@ -27,19 +27,56 @@ function App() {
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        console.log("Initializing app...")
         await databaseService.init()
-        console.log("Database initialized")
 
         const permissions = await permissionService.requestAllPermissions()
         await permissionService.showPermissionAlert(permissions)
-        console.log("Permissions requested")
 
         const isLoggedIn = await databaseService.isUserLoggedIn()
-        console.log("User logged in:", isLoggedIn)
-        setIsAuthenticated(isLoggedIn)
+
+        if (isLoggedIn) {
+          const currentUser = await databaseService.getCurrentUser()
+          if (currentUser) {
+            const biometricEnabled = await databaseService.isBiometricEnabled(currentUser.id)
+
+            if (biometricEnabled) {
+              const biometricAvailable = await LocalAuthentication.hasHardwareAsync()
+              const biometricEnrolled = await LocalAuthentication.isEnrolledAsync()
+
+              if (biometricAvailable && biometricEnrolled) {
+                try {
+                  const result = await LocalAuthentication.authenticateAsync({
+                    promptMessage: "Confirme sua identidade para continuar",
+                    fallbackLabel: "Usar senha",
+                    cancelLabel: "Cancelar",
+                  })
+
+                  if (result.success) {
+                    setIsAuthenticated(true)
+                  } else {
+                    await databaseService.logout()
+                    setIsAuthenticated(false)
+                    Alert.alert("Autenticação", "Autenticação biométrica necessária para continuar")
+                  }
+                } catch (error) {
+                  await databaseService.logout()
+                  setIsAuthenticated(false)
+                  Alert.alert("Erro", "Erro na autenticação biométrica")
+                }
+              } else {
+                setIsAuthenticated(true)
+              }
+            } else {
+              setIsAuthenticated(true)
+            }
+          } else {
+            setIsAuthenticated(false)
+          }
+        } else {
+          setIsAuthenticated(false)
+        }
       } catch (error) {
-        console.error("Error initializing app:", error)
+        setIsAuthenticated(false)
       } finally {
         setIsLoading(false)
       }
@@ -47,6 +84,11 @@ function App() {
 
     initializeApp()
   }, [])
+
+  const handleDataCleared = () => {
+    setIsAuthenticated(false)
+    Alert.alert("Dados Limpos", "Todos os dados foram removidos. Você foi deslogado do sistema.")
+  }
 
   if (isLoading) {
     return (
@@ -73,12 +115,17 @@ function App() {
             <Stack.Screen name="Home">
               {(props) => <HomeScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
             </Stack.Screen>
+            <Stack.Screen name="Favorites">
+              {(props) => <FavoritesScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
+            </Stack.Screen>
             <Stack.Screen name="Add" component={AddScreen} />
             <Stack.Screen name="Map" component={MapScreen} />
             <Stack.Screen name="Profile">
               {(props) => <ProfileScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
             </Stack.Screen>
-            <Stack.Screen name="Test" component={TestScreen} />
+            <Stack.Screen name="Test">
+              {(props) => <TestScreen {...props} onDataCleared={handleDataCleared} />}
+            </Stack.Screen>
             <Stack.Screen name="EditPlace" component={EditPlaceScreen} />
             <Stack.Screen name="PhotoView" component={PhotoViewScreen} />
             <Stack.Screen name="AddressSearch" component={AddressSearchScreen} />

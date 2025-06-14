@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
-import { AntDesign } from "@expo/vector-icons"
+import { AntDesign, Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 
 function NavBar({ title }) {
@@ -9,6 +9,9 @@ function NavBar({ title }) {
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.rightButtons}>
+        <TouchableOpacity onPress={() => navigation.navigate("Favorites")} style={styles.button}>
+          <Ionicons name="heart" size={22} color="white" />
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")} style={styles.button}>
           <AntDesign name="user" size={22} color="white" />
         </TouchableOpacity>

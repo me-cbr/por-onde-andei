@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from "react-native"
 import * as ImagePicker from "expo-image-picker"

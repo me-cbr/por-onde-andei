@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef } from "react"
 import {
   View,
@@ -16,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import databaseService from "../services/DatabaseService"
 
-const TestScreen = () => {
+const TestScreen = ({ onDataCleared }) => {
   const navigation = useNavigation()
   const [testResults, setTestResults] = useState([])
   const [isRunning, setIsRunning] = useState(false)
@@ -369,7 +367,16 @@ const TestScreen = () => {
       addResult("Limpeza", "info", "Removendo dados de teste...")
       await databaseService.clearAllData()
       addResult("Limpeza", "success", "Todos os dados removidos com sucesso")
-      Alert.alert("Sucesso", "Dados de teste removidos")
+      Alert.alert("Sucesso", "Dados de teste removidos", [
+        {
+          text: "OK",
+          onPress: () => {
+            if (onDataCleared) {
+              onDataCleared()
+            }
+          },
+        },
+      ])
     } catch (error) {
       addResult("Limpeza", "error", "Erro ao limpar dados", error.message)
       Alert.alert("Erro", "Erro ao limpar dados de teste")
@@ -412,7 +419,7 @@ const TestScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Teste do Database</Text>
+        <Text style={styles.headerTitle}>Testes</Text>
         <View style={styles.placeholder} />
       </View>
 

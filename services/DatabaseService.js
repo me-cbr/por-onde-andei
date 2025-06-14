@@ -507,6 +507,42 @@ class DatabaseService {
     }
   }
 
+  async getFavoritesByUser(userId) {
+    try {
+      console.log("Getting favorite places for user ID:", userId)
+
+      const result = await this.db.getAllAsync(
+        "SELECT * FROM places WHERE user_id = ? AND is_favorite = 1 ORDER BY created_at DESC",
+        [userId],
+      )
+
+      console.log("Raw favorite places from database:", result.length, "favorites found")
+
+      const favorites = result.map((place) => ({
+        id: place.id,
+        title: place.title,
+        photo: place.photo,
+        address: place.address,
+        location:
+          place.latitude && place.longitude
+            ? {
+                latitude: place.latitude,
+                longitude: place.longitude,
+              }
+            : null,
+        date: place.date,
+        photoDate: place.photo_date,
+        isFavorite: place.is_favorite === 1,
+      }))
+
+      console.log("Processed favorite places:", favorites.length, "favorites")
+      return favorites
+    } catch (error) {
+      console.error("Error getting favorite places by user:", error)
+      throw error
+    }
+  }
+
   async deletePlace(placeId, userId) {
     try {
       await this.db.runAsync("DELETE FROM places WHERE id = ? AND user_id = ?", [placeId, userId])
