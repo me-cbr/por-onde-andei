@@ -53,18 +53,18 @@ function AddressSearchScreen({ navigation, route }) {
       const placeDetails = await locationService.getPlaceDetails(suggestion.id)
 
       if (placeDetails) {
-        const addressData = {
+      const addressData = {
           address: placeDetails.address,
           location: placeDetails.location,
-          placeId: suggestion.id,
+        placeId: suggestion.id,
           name: placeDetails.name,
-        }
+      }
 
-        if (onAddressSelect) {
-          onAddressSelect(addressData)
-        }
+      if (onAddressSelect) {
+        onAddressSelect(addressData)
+      }
 
-        navigation.goBack()
+      navigation.goBack()
       } else {
         Alert.alert("Erro", "Não foi possível obter detalhes do endereço")
       }
@@ -162,13 +162,12 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   header: {
-    height: 100,
+    height: 60,
     backgroundColor: "#4CAF50",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 40,
   },
   backButton: {
     padding: 5,
@@ -222,6 +221,7 @@ const styles = StyleSheet.create({
   },
   suggestionsList: {
     flex: 1,
+    showsVerticalScrollIndicator: true,
   },
   suggestionItem: {
     flexDirection: "row",
