@@ -86,6 +86,7 @@ function AddressSearchScreen({ navigation, route }) {
         location,
         placeId: null,
         name: "Localização Atual",
+        source: "gps",
       }
 
       if (onAddressSelect) {
